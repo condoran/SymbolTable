@@ -1,3 +1,5 @@
+import java.io.File;
+
 public class main {
     public static void main(String[] args)
     {
@@ -13,5 +15,14 @@ public class main {
         System.out.println(s.search("1"));
         System.out.println(s.search("\"string\""));
         System.out.println(s.search("cbaa"));
+        System.out.println("\n");
+        Scaner sc = new Scaner("file.txt");
+        try {
+            sc.scan();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Erorare");
+        }
     }
 }
