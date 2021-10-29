@@ -69,7 +69,7 @@ public class Scaner {
         File problemFile = new File(problemFileName);
 
         java.util.Scanner reader = new java.util.Scanner(problemFile);
-
+        int line = 1;
         while (reader.hasNextLine())
         {
             List<String> constants = new ArrayList<>();
@@ -91,10 +91,10 @@ public class Scaner {
                 while (data.indexOf("\"", i) != -1 && data.indexOf("\"", data.indexOf("\"", i) + 1) != -1) {
                     //System.out.println(data.indexOf("\"", i));
                     //System.out.println(data.indexOf("\"", data.indexOf("\"", i) + 1));
-                    tokenizeAndDetect(data.substring(0, data.indexOf("\"", i)).split("\\s+"));
+                    tokenizeAndDetect(data.substring(0, data.indexOf("\"", i)).split("\\s+"), line);
                     tokenList[0] = (data.substring(data.indexOf("\"", i), data.indexOf("\"", data.indexOf("\"", i) + 1) + 1));
-                    tokenizeAndDetect(tokenList);
-                    tokenizeAndDetect(data.substring(data.indexOf("\"", data.indexOf("\"", i) + 1) + 1).split("\\s+"));
+                    tokenizeAndDetect(tokenList, line);
+                    tokenizeAndDetect(data.substring(data.indexOf("\"", data.indexOf("\"", i) + 1) + 1).split("\\s+"), line);
                     data = data.substring(0, data.indexOf("\"", i)) + data.substring(data.indexOf("\"", data.indexOf("\"", i) + 1) + 1);
                     //System.out.println(constants.get(0));
                     i = data.indexOf("\"", i + 1);
@@ -103,10 +103,10 @@ public class Scaner {
             else
             {
                 tokenList = data.split("\\s+");
-                tokenizeAndDetect(tokenList);
+                tokenizeAndDetect(tokenList, line);
             }
             //tokenList = data.split("\\s+");
-
+        line++;
         }
         try {
             FileWriter myWriter = new FileWriter("PIF.out");
@@ -137,7 +137,7 @@ public class Scaner {
 
     }
 
-    private void tokenizeAndDetect(String[] tokenList)
+    private void tokenizeAndDetect(String[] tokenList, int line)
     {
         for (int i = 0; i < tokenList.length; i++)
         {
@@ -150,7 +150,7 @@ public class Scaner {
                     pif.add(new Pair<>(tokenList[i], pos));
                 } else {
                     System.out.println("Lexical Error");
-                    System.out.println(tokenList[i]);
+                    System.out.println("Line: " + line);
                 }
 
             }
