@@ -1,15 +1,14 @@
-$ n;
-! ok = yes;
-in >> n
-for ($ i = 2; i < n / 2; i++)
+$ 2a, b, c;
+in >> a >> b >> c;
+if (a < b & a < c)
 {
-if (n % i == 0)
-{
-ok = no;
-screen << "It is not prime";
+screen << “max is << a;
 }
-}
-if (ok == yes)
+else if (b < a & b < c)
 {
-screen << "It is prime";
+screen << b;
+}
+else
+{
+screen << c;
 }

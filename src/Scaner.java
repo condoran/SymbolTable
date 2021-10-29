@@ -2,6 +2,8 @@ import javafx.util.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -36,6 +38,10 @@ public class Scaner {
         reservedWords.add("$");
         reservedWords.add("!");
         reservedWords.add("=");
+        reservedWords.add("&");
+        reservedWords.add("#");
+        reservedWords.add("@");
+        reservedWords.add("^");
         operators.add("+");
         operators.add("-");
         operators.add("*");
@@ -47,6 +53,7 @@ public class Scaner {
         operators.add("<=");
         operators.add("%");
         separators.add("[");
+        separators.add(",");
         separators.add("]");
         separators.add("{");
         separators.add("}");
@@ -67,42 +74,85 @@ public class Scaner {
         {
             List<String> constants = new ArrayList<>();
             String data = reader.nextLine();
+            String[] tokenList = new String[1];
             for (String separator : separators)
             {
                 int i = 0;
-                while (data.indexOf("\"", i) != -1 && data.indexOf("\"", data.indexOf("\"", i) + 1) != -1)
-                {
-                    System.out.println(data.indexOf("\"", i));
-                    System.out.println(data.indexOf("\"", data.indexOf("\"", i) + 1));
-                    constants.add(data.substring(data.indexOf("\"", i), data.indexOf("\"", data.indexOf("\"", i) + 1) + 1));
-                    data = data.substring(0, data.indexOf("\"", i)) + data.substring(data.indexOf("\"", data.indexOf("\"", i) + 1) + 1);
-                    System.out.println(constants.get(0));
-                    i = data.indexOf("\"", i + 1);
-                }
-                i = 0;
                 while (data.indexOf(separator, i) != -1)
                 {
                     data = data.substring(0, data.indexOf(separator, i)) + " " + separator + " " + data.substring(data.indexOf(separator, i) + separator.length());
                     i = data.indexOf(separator, i) + separator.length();
                 }
+
                 //System.out.println(data);
             }
-            String[] tokenList = data.split("\\s+");
-            for (int i = 0; i < tokenList.length; i++)
-            {
-                if (tokenList[i].length() != 0) {
-                    int detected = detect(tokenList[i]);
-                    if (detected >= 1 && detected <= 3) {
-                        pif.add(new Pair<>(tokenList[i], 0));
-                    } else if (detected == 4 || detected == 5) {
-                        int pos = searchAndAddSt(tokenList[i]);
-                        pif.add(new Pair<>(tokenList[i], pos));
-                    } else {
-                        System.out.println("Lexical Error");
-                        System.out.println(tokenList[i]);
-                    }
-
+            int i = 0;
+            if (data.indexOf("\"", i) != -1) {
+                while (data.indexOf("\"", i) != -1 && data.indexOf("\"", data.indexOf("\"", i) + 1) != -1) {
+                    //System.out.println(data.indexOf("\"", i));
+                    //System.out.println(data.indexOf("\"", data.indexOf("\"", i) + 1));
+                    tokenizeAndDetect(data.substring(0, data.indexOf("\"", i)).split("\\s+"));
+                    tokenList[0] = (data.substring(data.indexOf("\"", i), data.indexOf("\"", data.indexOf("\"", i) + 1) + 1));
+                    tokenizeAndDetect(tokenList);
+                    tokenizeAndDetect(data.substring(data.indexOf("\"", data.indexOf("\"", i) + 1) + 1).split("\\s+"));
+                    data = data.substring(0, data.indexOf("\"", i)) + data.substring(data.indexOf("\"", data.indexOf("\"", i) + 1) + 1);
+                    //System.out.println(constants.get(0));
+                    i = data.indexOf("\"", i + 1);
                 }
+            }
+            else
+            {
+                tokenList = data.split("\\s+");
+                tokenizeAndDetect(tokenList);
+            }
+            //tokenList = data.split("\\s+");
+
+        }
+        try {
+            FileWriter myWriter = new FileWriter("PIF.out");
+            myWriter.write("PIF:\n");
+            for (Pair<String, Integer> pifElem : pif) {
+                myWriter.write(pifElem.getKey() + " | " + pifElem.getValue() + "\n");
+            }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+//        System.out.println("PIF:");
+//        for (Pair<String, Integer> pifElem : pif) {
+//            System.out.println(pifElem.getKey() + " | " + pifElem.getValue());
+//        }
+        try {
+            FileWriter myWriter = new FileWriter("ST.out");
+            myWriter.write("Symbol Table:\n");
+            st.tString(myWriter);
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+//        System.out.println("\n");
+//        System.out.println("Symbol Table:");
+
+    }
+
+    private void tokenizeAndDetect(String[] tokenList)
+    {
+        for (int i = 0; i < tokenList.length; i++)
+        {
+            if (tokenList[i].length() != 0) {
+                int detected = detect(tokenList[i]);
+                if (detected >= 1 && detected <= 3) {
+                    pif.add(new Pair<>(tokenList[i], 0));
+                } else if (detected == 4 || detected == 5) {
+                    int pos = searchAndAddSt(tokenList[i]);
+                    pif.add(new Pair<>(tokenList[i], pos));
+                } else {
+                    System.out.println("Lexical Error");
+                    System.out.println(tokenList[i]);
+                }
+
             }
         }
     }

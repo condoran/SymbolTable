@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +87,16 @@ public class SymbolTable {
         for (int i = 0; i < oldTable.size(); i++)
         {
             add(oldTable.get(i));
+        }
+    }
+
+    public void tString(FileWriter myWriter) throws IOException {
+        for (int i = 0; i < cap; i++)
+        {
+            if (table.get(i) != null)
+            {
+                myWriter.write(table.get(i) + " | " + i + "\n");
+            }
         }
     }
 }
