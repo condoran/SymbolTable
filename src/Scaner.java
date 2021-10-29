@@ -12,14 +12,48 @@ public class Scaner {
     private List<Pair<String, Integer>> pif = new ArrayList<>();
     private SymbolTable st = new SymbolTable();;
     private String problemFileName;
-    private List<String> reservedWords;
-    private List<String> operators;
-    private List<String> separators;
+    private List<String> reservedWords = new ArrayList<>();
+    private List<String> operators = new ArrayList<>();
+    private List<String> separators = new ArrayList<>();
 
 
     public Scaner(String pfn)
     {
         problemFileName = pfn;
+        reservedWords.add("if");
+        reservedWords.add("else");
+        reservedWords.add("while");
+        reservedWords.add("for");
+        reservedWords.add("not");
+        reservedWords.add("no");
+        reservedWords.add("yes");
+        reservedWords.add("in");
+        reservedWords.add("screen");
+        reservedWords.add("hi");
+        reservedWords.add("const");
+        reservedWords.add(">>");
+        reservedWords.add("<<");
+        reservedWords.add("$");
+        reservedWords.add("!");
+        reservedWords.add("=");
+        operators.add("+");
+        operators.add("-");
+        operators.add("*");
+        operators.add("/");
+        operators.add("<");
+        operators.add("==");
+        operators.add(">=");
+        operators.add(">");
+        operators.add("<=");
+        operators.add("%");
+        separators.add("[");
+        separators.add("]");
+        separators.add("{");
+        separators.add("}");
+        separators.add("(");
+        separators.add(")");
+        separators.add(":");
+        separators.add(";");
     }
 
     public void scan() throws FileNotFoundException {
@@ -31,22 +65,44 @@ public class Scaner {
 
         while (reader.hasNextLine())
         {
+            List<String> constants = new ArrayList<>();
             String data = reader.nextLine();
+            for (String separator : separators)
+            {
+                int i = 0;
+                while (data.indexOf("\"", i) != -1 && data.indexOf("\"", data.indexOf("\"", i) + 1) != -1)
+                {
+                    System.out.println(data.indexOf("\"", i));
+                    System.out.println(data.indexOf("\"", data.indexOf("\"", i) + 1));
+                    constants.add(data.substring(data.indexOf("\"", i), data.indexOf("\"", data.indexOf("\"", i) + 1) + 1));
+                    data = data.substring(0, data.indexOf("\"", i)) + data.substring(data.indexOf("\"", data.indexOf("\"", i) + 1) + 1);
+                    System.out.println(constants.get(0));
+                    i = data.indexOf("\"", i + 1);
+                }
+                i = 0;
+                while (data.indexOf(separator, i) != -1)
+                {
+                    data = data.substring(0, data.indexOf(separator, i)) + " " + separator + " " + data.substring(data.indexOf(separator, i) + separator.length());
+                    i = data.indexOf(separator, i) + separator.length();
+                }
+                //System.out.println(data);
+            }
             String[] tokenList = data.split("\\s+");
             for (int i = 0; i < tokenList.length; i++)
             {
-                int detected = detect(tokenList[i]);
-                if (detected >= 1 && detected <= 3)
-                {
-                    pif.add(new Pair<>(tokenList[i], 0));
+                if (tokenList[i].length() != 0) {
+                    int detected = detect(tokenList[i]);
+                    if (detected >= 1 && detected <= 3) {
+                        pif.add(new Pair<>(tokenList[i], 0));
+                    } else if (detected == 4 || detected == 5) {
+                        int pos = searchAndAddSt(tokenList[i]);
+                        pif.add(new Pair<>(tokenList[i], pos));
+                    } else {
+                        System.out.println("Lexical Error");
+                        System.out.println(tokenList[i]);
+                    }
+
                 }
-                else if (detected == 4 || detected == 5)
-                {
-                    int pos = searchAndAddSt(tokenList[i]);
-                    pif.add(new Pair<>(tokenList[i], pos));
-                }
-                else
-                    System.out.println("Lexical Error");
             }
         }
     }
@@ -60,6 +116,7 @@ public class Scaner {
 
     public int detect(String token)
     {
+
         if (isNumeric(token) || (token.indexOf("\"") == 0 && token.substring(1, token.length()).indexOf("\"") == token.length() - 2))
             return 5;
         else if (reservedWords.contains(token))
@@ -75,7 +132,8 @@ public class Scaner {
             return 3;
         }
         else if (Character.isLetter(token.charAt(0)))
-        System.out.println(token);
+            return 4;
+
         return -1;
     }
 

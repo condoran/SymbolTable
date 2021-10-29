@@ -31,17 +31,17 @@ public class SymbolTable {
         Integer pos = h(v);
         while (pos < cap) {
 
-            if (table.get(pos) == v)
-                return pos;
-            else if (table.get(pos) == null)
+            if (table.get(pos) == null) {
                 return -1;
+            } else if (table.get(pos).equals(v))
+                return pos;
             pos++;
         }
         if (pos == cap)
         {
             while (pos < cap)
             {
-                if (table.get(pos) == v)
+                if (table.get(pos).equals(v))
                     return pos;
                 else if (table.get(pos) == null)
                     return -1;
@@ -60,7 +60,7 @@ public class SymbolTable {
         {
             return -1;
         }
-        while (pos < cap && table.get(pos) != null && table.get(pos) != v)
+        while (pos < cap && table.get(pos) != null && !table.get(pos).equals(v))
         {
             pos++;
         }
@@ -73,5 +73,18 @@ public class SymbolTable {
         }
         table.set(pos, v);
         return pos;
+    }
+
+    public void resize()
+    {
+        List<String> oldTable = table;
+        table = new ArrayList<>();
+        cap = cap * 2;
+        for (int i = 0; i < cap; i++)
+            table.add(null);
+        for (int i = 0; i < oldTable.size(); i++)
+        {
+            add(oldTable.get(i));
+        }
     }
 }
