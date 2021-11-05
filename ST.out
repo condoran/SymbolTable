@@ -1,5 +1,9 @@
 Symbol Table:
-is | 0
-a | 17
-b | 18
-c | 19
+2 | 0
+"It is not prime" | 1
+i | 5
+n | 10
+ok | 18
+"It is prime" | 32
+i++ | 41
+0 | 48

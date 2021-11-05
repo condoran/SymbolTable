@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SymbolTable {
-    private Integer cap = 20;
+    private Integer cap = 50;
     private Integer length = 0;
     private List<String> table;
 
