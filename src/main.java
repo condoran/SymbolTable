@@ -1,8 +1,8 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class main {
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws FileNotFoundException {
         SymbolTable s = new SymbolTable();
 //        System.out.println(s.add("abc"));
 //        System.out.println(s.add("cba"));
@@ -16,13 +16,15 @@ public class main {
 //        System.out.println(s.search("\"string\""));
 //        System.out.println(s.search("cbaa"));
 //        System.out.println("\n");
-        Scaner sc = new Scaner("file.txt");
-        try {
-            sc.scan();
-        }
-        catch (Exception e)
-        {
-            System.out.println("Erorare");
-        }
+//        Scaner sc = new Scaner("file.txt");
+//        try {
+//            sc.scan();
+//        }
+//        catch (Exception e)
+//        {
+//            System.out.println("Erorare");
+//        }
+        FA fa = new FA("FA.in");
+        fa.menuLoop();
     }
 }
